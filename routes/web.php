@@ -30,15 +30,27 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+// Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index')->middleware('auth');
 
-Route::get('/', [LoginController::class, 'index'])->name('login.index')->middleware('guest');
+Route::get('/', [LoginController::class, 'index'])->name('login.index');
 Route::post('/login', [LoginController::class, 'authenticate'])->name('login.authenticate');
-Route::post('/logout', [LoginController::class, 'logout'])->name('login.logout');
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index')->middleware('auth');
+
+Route::middleware(['auth', 'role:1'])->group(function () {
+    Route::get('/dashboard/super-admin', [DashboardController::class, 'index'])->name('dashboard.index');
+});
+
+Route::middleware(['auth', 'role:2'])->group(function () {
+    Route::get('/dashboard/admin-gudang', [DashboardController::class, 'admingudang'])->name('admingudang');
+});
+
+Route::middleware(['auth', 'role:3'])->group(function () {
+    Route::get('/dashboard/admin-tambak', [DashboardController::class, 'admintambak'])->name('admintambak');
+});
 
 // Interface Admin
-Route::group(['prefix' => 'kelolaPengguna'], function(){
+Route::group(['prefix' => 'kelolaPengguna'], function () {
     Route::get('/', [UserController::class, 'index'])->name('admin.kelolaPengguna.index')->middleware('auth');
     Route::post('/list', [UserController::class, 'list'])->name('admin.kelolaPengguna.list')->middleware('auth');
     Route::get('/create', [UserController::class, 'create'])->name('admin.kelolaPengguna.create')->middleware('auth');
@@ -49,7 +61,7 @@ Route::group(['prefix' => 'kelolaPengguna'], function(){
     Route::delete('/{id}', [UserController::class, 'destroy'])->name('admin.kelolaPengguna.destroy')->middleware('auth');
 });
 
-Route::group(['prefix' => 'kelolaGudang'], function(){
+Route::group(['prefix' => 'kelolaGudang'], function () {
     Route::get('/', [GudangController::class, 'index'])->name('admin.kelolaGudang.index')->middleware('auth');
     Route::post('/list', [GudangController::class, 'list'])->name('admin.kelolaGudang.list')->middleware('auth');
     Route::get('/create', [GudangController::class, 'create'])->name('admin.kelolaGudang.create')->middleware('auth');
@@ -60,7 +72,7 @@ Route::group(['prefix' => 'kelolaGudang'], function(){
     Route::delete('/{id}', [GudangController::class, 'destroy'])->name('admin.kelolaGudang.destroy')->middleware('auth');
 });
 
-Route::group(['prefix' => 'kelolaPJGudang'], function(){
+Route::group(['prefix' => 'kelolaPJGudang'], function () {
     Route::get('/', [PJGudangController::class, 'index'])->name('admin.kelolaPJGudang.index')->middleware('auth');
     Route::post('/list', [PJGudangController::class, 'list'])->name('admin.kelolaPJGudang.list')->middleware('auth');
     Route::get('/create', [PJGudangController::class, 'create'])->name('admin.kelolaPJGudang.create')->middleware('auth');
@@ -71,7 +83,7 @@ Route::group(['prefix' => 'kelolaPJGudang'], function(){
     Route::delete('/{id}', [PJGudangController::class, 'destroy'])->name('admin.kelolaPJGudang.destroy')->middleware('auth');
 });
 
-Route::group(['prefix' => 'kelolaPakan'], function(){
+Route::group(['prefix' => 'kelolaPakan'], function () {
     Route::get('/', [PakanController::class, 'index'])->name('admin.kelolaPakan.index')->middleware('auth');
     Route::post('/list', [PakanController::class, 'list'])->name('admin.kelolaPakan.list')->middleware('auth');
     Route::get('/create', [PakanController::class, 'create'])->name('admin.kelolaPakan.create')->middleware('auth');
@@ -82,7 +94,7 @@ Route::group(['prefix' => 'kelolaPakan'], function(){
     Route::delete('/{id}', [PakanController::class, 'destroy'])->name('admin.kelolaPakan.destroy')->middleware('auth');
 });
 
-Route::group(['prefix' => 'kelolaPakanGudang'], function(){
+Route::group(['prefix' => 'kelolaPakanGudang'], function () {
     Route::get('/', [PakanGudangController::class, 'index'])->name('admin.kelolaPakanGudang.index')->middleware('auth');
     Route::post('/list', [PakanGudangController::class, 'list'])->name('admin.kelolaPakanGudang.list')->middleware('auth');
     Route::get('/create', [PakanGudangController::class, 'create'])->name('admin.kelolaPakanGudang.create')->middleware('auth');
@@ -93,7 +105,7 @@ Route::group(['prefix' => 'kelolaPakanGudang'], function(){
     Route::delete('/{id}', [PakanGudangController::class, 'destroy'])->name('admin.kelolaPakanGudang.destroy')->middleware('auth');
 });
 
-Route::group(['prefix' => 'kelolaAlat'], function(){
+Route::group(['prefix' => 'kelolaAlat'], function () {
     Route::get('/', [AlatController::class, 'index'])->name('admin.kelolaAlat.index')->middleware('auth');
     Route::post('/list', [AlatController::class, 'list'])->name('admin.kelolaAlat.list')->middleware('auth');
     Route::get('/create', [AlatController::class, 'create'])->name('admin.kelolaAlat.create')->middleware('auth');
@@ -105,7 +117,7 @@ Route::group(['prefix' => 'kelolaAlat'], function(){
 });
 
 // manajemen tambak
-Route::group(['prefix' => 'tambak'], function(){
+Route::group(['prefix' => 'tambak'], function () {
     Route::get('/', [TambakController::class, 'index'])->name('tambak.index');
     Route::post('/list', [TambakController::class, 'list'])->name('tambak.list');
     Route::get('/create', [TambakController::class, 'create'])->name('tambak.create');
@@ -117,7 +129,7 @@ Route::group(['prefix' => 'tambak'], function(){
 });
 
 // Route manajemen kolam
-Route::group(['prefix' => 'kolam'], function(){
+Route::group(['prefix' => 'kolam'], function () {
     Route::get('/', [KolamController::class, 'index'])->name('kolam.index');
     Route::post('/list', [KolamController::class, 'list'])->name('kolam.list');
     Route::get('/create', [KolamController::class, 'create'])->name('kolam.create');
@@ -129,7 +141,7 @@ Route::group(['prefix' => 'kolam'], function(){
 });
 
 // Route fase tambak
-Route::group(['prefix' => 'fasekolam'], function(){
+Route::group(['prefix' => 'fasekolam'], function () {
     Route::get('/', [FaseKolamController::class, 'index'])->name('fasekolam.index');
     Route::post('/list', [FaseKolamController::class, 'list'])->name('fasekolam.list');
     Route::get('/create', [FaseKolamController::class, 'create'])->name('fasekolam.create');
@@ -141,7 +153,7 @@ Route::group(['prefix' => 'fasekolam'], function(){
 });
 
 // Route manajemen pj tambak
-Route::group(['prefix' => 'pjTambak'], function(){
+Route::group(['prefix' => 'pjTambak'], function () {
     Route::get('/', [PjTambakController::class, 'index'])->name('pjTambak.index');
     Route::post('/list', [PjTambakController::class, 'list'])->name('pjTambak.list');
     Route::get('/create', [PjTambakController::class, 'create'])->name('pjTambak.create');
@@ -153,7 +165,7 @@ Route::group(['prefix' => 'pjTambak'], function(){
 });
 
 // Route anco
-Route::group(['prefix' => 'anco'], function(){
+Route::group(['prefix' => 'anco'], function () {
     Route::get('/', [AncoController::class, 'index'])->name('anco.index')->middleware('auth');
     Route::post('/list', [AncoController::class, 'list'])->name('anco.list')->middleware('auth');
     Route::get('/create', [AncoController::class, 'create'])->name('anco.create')->middleware('auth');
@@ -165,7 +177,7 @@ Route::group(['prefix' => 'anco'], function(){
 });
 
 // Route kualitas air
-Route::group(['prefix' => 'kualitasair'], function(){
+Route::group(['prefix' => 'kualitasair'], function () {
     Route::get('/', [KualitasAirController::class, 'index'])->name('kualitasair.index')->middleware('auth');
     Route::post('/list', [KualitasAirController::class, 'list'])->name('kualitasair.list')->middleware('auth');
     Route::get('/create', [KualitasAirController::class, 'create'])->name('kualitasair.create')->middleware('auth');
@@ -177,7 +189,7 @@ Route::group(['prefix' => 'kualitasair'], function(){
 });
 
 // Route penanganan
-Route::group(['prefix' => 'penanganan'], function(){
+Route::group(['prefix' => 'penanganan'], function () {
     Route::get('/', [PenangananController::class, 'index'])->name('penanganan.index')->middleware('auth');
     Route::post('/list', [PenangananController::class, 'list'])->name('penanganan.list')->middleware('auth');
     Route::get('/create', [PenangananController::class, 'create'])->name('penanganan.create')->middleware('auth');
@@ -189,7 +201,7 @@ Route::group(['prefix' => 'penanganan'], function(){
 });
 
 // Route sampling
-Route::group(['prefix' => 'sampling'], function(){
+Route::group(['prefix' => 'sampling'], function () {
     Route::get('/', [SamplingController::class, 'index'])->name('sampling.index')->middleware('auth');
     Route::post('/list', [SamplingController::class, 'list'])->name('sampling.list')->middleware('auth');
     Route::get('/create', [SamplingController::class, 'create'])->name('sampling.create')->middleware('auth');
@@ -201,7 +213,7 @@ Route::group(['prefix' => 'sampling'], function(){
 });
 
 // Route pakan harian
-Route::group(['prefix' => 'pakanHarian'], function(){
+Route::group(['prefix' => 'pakanHarian'], function () {
     Route::get('/', [PakanHarianController::class, 'index'])->name('pakanharian.index')->middleware('auth');
     Route::post('/list', [PakanHarianController::class, 'list'])->name('pakanharian.list')->middleware('auth');
     Route::get('/create', [PakanHarianController::class, 'create'])->name('pakanharian.create')->middleware('auth');
@@ -213,7 +225,7 @@ Route::group(['prefix' => 'pakanHarian'], function(){
 });
 
 // Route kematian udang
-Route::group(['prefix' => 'kematianUdang'], function(){
+Route::group(['prefix' => 'kematianUdang'], function () {
     Route::get('/', [KematianUdangController::class, 'index'])->name('kematianudang.index')->middleware('auth');
     Route::post('/list', [KematianUdangController::class, 'list'])->name('kematianudang.list')->middleware('auth');
     Route::get('/create', [KematianUdangController::class, 'create'])->name('kematianudang.create')->middleware('auth');
