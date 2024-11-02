@@ -36,17 +36,8 @@ Route::get('/', [LoginController::class, 'index'])->name('login.index');
 Route::post('/login', [LoginController::class, 'authenticate'])->name('login.authenticate');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-
-Route::middleware(['auth', 'role:1'])->group(function () {
-    Route::get('/dashboard/super-admin', [DashboardController::class, 'index'])->name('dashboard.index');
-});
-
-Route::middleware(['auth', 'role:2'])->group(function () {
-    Route::get('/dashboard/admin-gudang', [DashboardController::class, 'admingudang'])->name('admingudang');
-});
-
-Route::middleware(['auth', 'role:3'])->group(function () {
-    Route::get('/dashboard/admin-tambak', [DashboardController::class, 'admintambak'])->name('admintambak');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
 });
 
 // Interface Admin
